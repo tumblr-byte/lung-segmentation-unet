@@ -16,7 +16,7 @@ st.title("🫁 Lung Segmentation from Chest X-Ray")
 st.markdown("Upload a chest X-ray image and get the lung segmentation mask!")
 
 # GitHub Release Configuration
-GITHUB_REPO = "tumblr-byte"  
+GITHUB_REPO = "tumblr-byte/lung-segmentation-unet"  
 MODEL_VERSION = "v1.0.0"  
 MODEL_FILENAME = "best.pth"
 MODEL_URL = f"https://github.com/{GITHUB_REPO}/releases/download/{MODEL_VERSION}/{MODEL_FILENAME}"
