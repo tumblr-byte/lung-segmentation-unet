@@ -12,6 +12,9 @@ Deep learning model for automatic lung segmentation from chest X-ray images usin
 
 <img width="1397" height="2365" alt="Image" src="https://github.com/user-attachments/assets/c1636fc3-96d5-4fa2-8bc5-96b06ca74dd9" />
 
+## Live Demo
+
+**[Try the live app here!](https://lung-segmentation-unet.streamlit.app/)**
 
 ## Model Architecture
 
