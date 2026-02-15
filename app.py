@@ -16,55 +16,92 @@ st.title("🫁 Lung Segmentation from Chest X-Ray")
 st.markdown("Upload a chest X-ray image and get the lung segmentation mask!")
 
 # GitHub Release Configuration
-GITHUB_REPO = "tumblr-byte"  # Change this to your repo
-MODEL_VERSION = "v1.0.0"  # Change this to your release version
+GITHUB_REPO = "tumblr-byte"  
+MODEL_VERSION = "v1.0.0"  
 MODEL_FILENAME = "best.pth"
 MODEL_URL = f"https://github.com/{GITHUB_REPO}/releases/download/{MODEL_VERSION}/{MODEL_FILENAME}"
 
 def download_model(url, save_path):
     """Download model from GitHub releases"""
     if os.path.exists(save_path):
+        st.info("Model already exists locally.")
         return save_path
     
-    st.info(f"Downloading model from GitHub releases ({MODEL_VERSION})...")
-    response = requests.get(url, stream=True)
-    total_size = int(response.headers.get('content-length', 0))
-    
-    progress_bar = st.progress(0)
-    downloaded = 0
-    
-    with open(save_path, 'wb') as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            if chunk:
-                f.write(chunk)
-                downloaded += len(chunk)
-                if total_size > 0:
-                    progress_bar.progress(downloaded / total_size)
-    
-    progress_bar.empty()
-    st.success("✅ Model downloaded successfully!")
-    return save_path
+    try:
+        st.info(f"Downloading model from GitHub releases ({MODEL_VERSION})...")
+        response = requests.get(url, stream=True)
+        response.raise_for_status()  # Raise error for bad status codes
+        
+        total_size = int(response.headers.get('content-length', 0))
+        
+        progress_bar = st.progress(0)
+        downloaded = 0
+        
+        with open(save_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    f.write(chunk)
+                    downloaded += len(chunk)
+                    if total_size > 0:
+                        progress_bar.progress(downloaded / total_size)
+        
+        progress_bar.empty()
+        
+        # Verify file was downloaded completely
+        if total_size > 0 and downloaded != total_size:
+            os.remove(save_path)
+            st.error(f"Download incomplete! Expected {total_size} bytes, got {downloaded} bytes.")
+            st.stop()
+        
+        st.success("✅ Model downloaded successfully!")
+        return save_path
+        
+    except requests.exceptions.RequestException as e:
+        st.error(f"Failed to download model: {str(e)}")
+        st.error("Please check:\n1. GitHub repo and release version are correct\n2. Model file exists in the release\n3. Internet connection is stable")
+        st.stop()
+    except Exception as e:
+        st.error(f"Error during download: {str(e)}")
+        if os.path.exists(save_path):
+            os.remove(save_path)
+        st.stop()
 
 @st.cache_resource
 def load_model():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
-    # Download model if not exists
-    model_path = Path(MODEL_FILENAME)
-    if not model_path.exists():
-        download_model(MODEL_URL, MODEL_FILENAME)
-    
-    model = smp.Unet(
-        encoder_name="resnet34",
-        encoder_weights="imagenet",
-        in_channels=3,
-        classes=1,
-        activation=None,
-    )
-    model.load_state_dict(torch.load(MODEL_FILENAME, map_location=device, weights_only=False))
-    model = model.to(device)
-    model.eval()
-    return model, device
+    try:
+        # Download model if not exists
+        model_path = Path(MODEL_FILENAME)
+        if not model_path.exists():
+            download_model(MODEL_URL, MODEL_FILENAME)
+        
+        model = smp.Unet(
+            encoder_name="resnet34",
+            encoder_weights="imagenet",
+            in_channels=3,
+            classes=1,
+            activation=None,
+        )
+        
+        # Load model with error handling
+        try:
+            state_dict = torch.load(MODEL_FILENAME, map_location=device, weights_only=False)
+            model.load_state_dict(state_dict)
+        except Exception as e:
+            st.error(f"Failed to load model: {str(e)}")
+            st.error("The model file might be corrupted. Deleting and trying to re-download...")
+            if os.path.exists(MODEL_FILENAME):
+                os.remove(MODEL_FILENAME)
+            st.stop()
+        
+        model = model.to(device)
+        model.eval()
+        return model, device
+        
+    except Exception as e:
+        st.error(f"Error initializing model: {str(e)}")
+        st.stop()
 
 def get_transforms():
     return A.Compose([
