@@ -42,7 +42,7 @@ def download_model(url, save_path):
                     progress_bar.progress(downloaded / total_size)
     
     progress_bar.empty()
-    st.success("Model downloaded successfully!")
+    st.success("✅ Model downloaded successfully!")
     return save_path
 
 @st.cache_resource
@@ -61,7 +61,7 @@ def load_model():
         classes=1,
         activation=None,
     )
-    model.load_state_dict(torch.load(MODEL_FILENAME, map_location=device))
+    model.load_state_dict(torch.load(MODEL_FILENAME, map_location=device, weights_only=False))
     model = model.to(device)
     model.eval()
     return model, device
