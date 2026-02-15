@@ -16,7 +16,7 @@ st.title("🫁 Lung Segmentation from Chest X-Ray")
 st.markdown("Upload a chest X-ray image and get the lung segmentation mask!")
 
 # GitHub Release Configuration
-GITHUB_REPO = "YOUR_USERNAME/YOUR_REPO_NAME"  # Change this to your repo
+GITHUB_REPO = "tumblr-byte"  # Change this to your repo
 MODEL_VERSION = "v1.0.0"  # Change this to your release version
 MODEL_FILENAME = "best.pth"
 MODEL_URL = f"https://github.com/{GITHUB_REPO}/releases/download/{MODEL_VERSION}/{MODEL_FILENAME}"
@@ -42,7 +42,7 @@ def download_model(url, save_path):
                     progress_bar.progress(downloaded / total_size)
     
     progress_bar.empty()
-    st.success("✅ Model downloaded successfully!")
+    st.success("Model downloaded successfully!")
     return save_path
 
 @st.cache_resource
