@@ -33,7 +33,7 @@ Upload a chest X-ray and get instant lung segmentation results.
 
 ### Why Segmentation and Not Classification?
 
-Lung segmentation is a **pixel-level prediction task** — for each pixel in the image, the model must decide whether it belongs to the lung region or not. This is fundamentally different from image classification (which outputs a single label per image). A segmentation model produces a **binary mask** of the same spatial dimensions as the input, making it ideal for downstream tasks like disease localization, volume estimation, and radiological analysis.
+Lung segmentation is a **pixel-level prediction task** for each pixel in the image, the model must decide whether it belongs to the lung region or not. This is fundamentally different from image classification (which outputs a single label per image). A segmentation model produces a **binary mask** of the same spatial dimensions as the input, making it ideal for downstream tasks like disease localization, volume estimation, and radiological analysis.
 
 ---
 
@@ -43,7 +43,7 @@ U-Net is the gold-standard architecture for medical image segmentation, and for 
 
 **1. Encoder-Decoder with Skip Connections**
 
-U-Net follows an hourglass structure. The encoder progressively downsamples the image to capture high-level semantic features ("this region is lung tissue"). The decoder then upsamples back to the original resolution. The key innovation is **skip connections** — the decoder receives feature maps directly from the corresponding encoder stage. This means:
+U-Net follows an hourglass structure. The encoder progressively downsamples the image to capture high-level semantic features ("this region is lung tissue"). The decoder then upsamples back to the original resolution. The key innovation is **skip connections** the decoder receives feature maps directly from the corresponding encoder stage. This means:
 
 - High-level understanding (what) from the bottleneck
 - Precise spatial location (where) from the encoder shortcuts
@@ -63,7 +63,7 @@ U-Net and its variants dominate medical segmentation benchmarks. For lung segmen
 
 ### Why ResNet34 as the Encoder?
 
-The encoder is the "backbone" of U-Net — it extracts hierarchical features from the image. Instead of training a random encoder from scratch, we use ResNet34 **pretrained on ImageNet** via the `segmentation_models_pytorch` library. Here's the full reasoning:
+The encoder is the "backbone" of U-Net. It extracts hierarchical features from the image. Instead of training a random encoder from scratch, we use ResNet34 **pretrained on ImageNet** via the `segmentation_models_pytorch` library. Here's the full reasoning:
 
 #### ResNet34 vs. ResNet18 (Why Go Deeper?)
 
@@ -85,7 +85,7 @@ ResNet18 works well for simple binary classification (as in the defect detection
 | Training Speed | Fast | Moderate | Slow |
 | Risk of Overfitting | Low | Moderate | High (small datasets) |
 
-ResNet50 and above use **bottleneck blocks** — more complex but also more prone to overfitting on small-to-medium datasets like this one. Since our dataset size is moderate and the task is binary segmentation (not multi-class), the additional capacity of ResNet50+ does not justify the trade-off in training cost and overfitting risk.
+ResNet50 and above use **bottleneck blocks** more complex but also more prone to overfitting on small-to-medium datasets like this one. Since our dataset size is moderate and the task is binary segmentation (not multi-class), the additional capacity of ResNet50+ does not justify the trade-off in training cost and overfitting risk.
 
 **ResNet34 hits the sweet spot**: deep enough to extract rich features, lightweight enough to train efficiently and generalize well.
 
@@ -133,7 +133,7 @@ Binary Cross-Entropy (BCE) measures pixel-wise error. In segmentation, **backgro
 
 ### The Problem with Dice Alone
 
-Dice Loss measures overlap between predicted and ground-truth masks. It is naturally robust to class imbalance. However, Dice Loss has a **flat gradient near zero** — when predictions are very wrong early in training, gradients can vanish, making convergence slow and unstable.
+Dice Loss measures overlap between predicted and ground-truth masks. It is naturally robust to class imbalance. However, Dice Loss has a **flat gradient near zero** when predictions are very wrong early in training, gradients can vanish, making convergence slow and unstable.
 
 ### Why the Combination Wins
 
