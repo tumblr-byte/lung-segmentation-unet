@@ -2,7 +2,7 @@
 
 A deep learning system for automatic lung segmentation from chest X-ray images, using a U-Net architecture with a ResNet34 encoder pretrained on ImageNet. Achieves a **Dice Score of 96.34%** on the validation set.
 
-<img width="1189" height="490" alt="Image" src="https://github.com/user-attachments/assets/c61d02c3-e7bb-42de-bd94-86694283d86d" />
+
 
 <img width="1397" height="2365" alt="Image" src="https://github.com/user-attachments/assets/c1636fc3-96d5-4fa2-8bc5-96b06ca74dd9" />
 ---
@@ -14,6 +14,8 @@ A deep learning system for automatic lung segmentation from chest X-ray images, 
 | Training Dice Score | 96.76% |
 | Validation Dice Score | 96.34% |
 | Validation Loss (Dice + BCE) | 0.1144 |
+
+<img width="1189" height="490" alt="Image" src="https://github.com/user-attachments/assets/c61d02c3-e7bb-42de-bd94-86694283d86d" />
 
 A Dice Score above 96% on medical imaging is considered strong performance for lung segmentation the model reliably delineates both lungs even under varying patient anatomy and X-ray exposure conditions.
 
