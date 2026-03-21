@@ -170,24 +170,6 @@ Adam is the standard optimizer for encoder-decoder networks with pretrained back
 
 ---
 
-## Data Augmentation
-
-```python
-train_transforms = A.Compose([
-    A.Resize(height=256, width=256),
-    A.Rotate(limit=35, p=0.5),       # Anatomical variation in patient positioning
-    A.HorizontalFlip(p=0.5),          # Symmetric lungs appear on both sides
-    A.Normalize(mean=[0.0], std=[1.0], max_pixel_value=255.0),
-])
-```
-
-Augmentations were chosen to reflect **real-world clinical variation**:
-- **Rotation**: Patients are not always perfectly aligned in X-ray captures
-- **Horizontal Flip**: Anatomically valid — both lung orientations are physiologically meaningful
-- No brightness/contrast jitter was applied to avoid distorting clinically significant intensity differences in X-ray images
-
----
-
 ## Dataset
 
 **Source:** [Chest X-Ray Masks and Labels (Kaggle)](https://www.kaggle.com/datasets/nikhilpandey360/chest-xray-masks-and-labels)
